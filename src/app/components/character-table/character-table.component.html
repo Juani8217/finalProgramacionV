@@ -1,0 +1,50 @@
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <h1 class="app-title">Rick & Morty </h1>
+      <div class="search-container">
+        <input #searchInput 
+               class="search-input" 
+               type="text" 
+               placeholder="Search character..." 
+               (input)="getCharacterByName(searchInput.value)" />
+        <i class="search-icon">🔍</i>
+      </div>
+    </header>
+
+    <div class="content-wrapper">
+      <div class="character-grid">
+        <div *ngFor="let character of characters" 
+             class="character-card" 
+             (click)="loadLocation(character)">
+          <div class="character-image">
+            <img [src]="character?.image" [alt]="character?.name" />
+            <span class="status-badge" [class]="character?.status?.toLowerCase()">
+              {{character?.status}}
+            </span>
+          </div>
+          <div class="character-info">
+            <h3>{{character?.name}}</h3>
+            <div class="info-row">
+              <span>Species:</span>
+              <strong>{{character?.species}}</strong>
+            </div>
+            <div class="info-row">
+              <span>Gender:</span>
+              <strong>{{character?.gender}}</strong>
+            </div>
+            <div class="info-row">
+              <span>Location:</span>
+              <strong>{{character?.locationName || 'Unknown'}}</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="app-footer">
+      <p>facundo Vilchez, Juan Murua, Lucero Juan</p>
+      <div class="portal-effect"></div>
+    </footer>
+  </div>
+</body>
