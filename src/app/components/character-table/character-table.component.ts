@@ -2,6 +2,8 @@ import { Component, OnInit, inject } from '@angular/core';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-character-table',
@@ -9,21 +11,25 @@ import { FormsModule } from '@angular/forms';
   imports: [
     CommonModule,
     FormsModule,
-    HttpClientModule // Importación necesaria para HttpClient
+    HttpClientModule
   ],
   templateUrl: './character-table.component.html',
   styleUrls: ['./character-table.component.css']
 })
 export class CharacterTableComponent implements OnInit {
-  private http = inject(HttpClient); // Alternativa moderna a constructor injection
+  private http = inject(HttpClient);
+  private authService = inject(AuthService);
+  private router = inject(Router);
 
   // URLs de la API
   readonly URL1 = 'https://rickandmortyapi.com/api/character';
   readonly URL2 = 'https://rickandmortyapi.com/api/character/?name=';
 
-  // Datos de personajes
+  // Datos y estado
   characters: any[] = [];
   charactersCache: any[] = [];
+  currentUser: any = null;
+  isLoading = true;
   
   // Ordenamiento
   sortDirection: 'asc' | 'desc' = 'asc';
@@ -45,10 +51,19 @@ export class CharacterTableComponent implements OnInit {
   };
 
   ngOnInit(): void {
+    this.checkAuthentication();
     this.loadCharacters();
   }
 
+  private checkAuthentication(): void {
+    this.currentUser = this.authService.getCurrentUser();
+    if (!this.currentUser) {
+      this.router.navigate(['/login']);
+    }
+  }
+
   private loadCharacters(sortBy: string | null = null): void {
+    this.isLoading = true;
     this.http.get<{results: any[]}>(this.URL1).subscribe({
       next: (data) => {
         this.charactersCache = data.results || [];
@@ -58,11 +73,13 @@ export class CharacterTableComponent implements OnInit {
         if (sortBy) {
           this.sortCharacters(sortBy);
         }
+        this.isLoading = false;
       },
       error: (err) => {
         console.error('Error loading characters:', err);
         this.charactersCache = [];
         this.characters = [];
+        this.isLoading = false;
       }
     });
   }
@@ -145,5 +162,10 @@ export class CharacterTableComponent implements OnInit {
         console.error('Error loading location details:', err);
       }
     });
+  }
+
+  logout(): void {
+    this.authService.logout();
+    this.router.navigate(['/login']);
   }
 }

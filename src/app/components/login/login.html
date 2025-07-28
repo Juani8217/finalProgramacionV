@@ -2,28 +2,39 @@
   <h2>Iniciar Sesión</h2>
   <form (ngSubmit)="onSubmit()">
     <div class="input-group">
-      <span class="input-label">Usuario</span>
-      <input 
-        [(ngModel)]="username" 
-        name="username" 
-        placeholder="rick_sanchez" 
+      <label for="username" class="input-label">Usuario</label>
+      <input
+        id="username"
+        [(ngModel)]="username"
+        name="username"
+        placeholder="rick_sanchez"
         required
+        [disabled]="isLoading"
       >
     </div>
     
     <div class="input-group">
-      <span class="input-label">Contraseña</span>
-      <input 
-        type="password" 
-        [(ngModel)]="password" 
-        name="password" 
-        placeholder="••••••••" 
+      <label for="password" class="input-label">Contraseña</label>
+      <input
+        id="password"
+        type="password"
+        [(ngModel)]="password"
+        name="password"
+        placeholder="••••••••"
         required
+        [disabled]="isLoading"
       >
     </div>
 
-    <button type="submit">INGRESAR</button>
+    <button type="submit" [disabled]="isLoading">
+      <span *ngIf="!isLoading">INGRESAR</span>
+      <span *ngIf="isLoading">CARGANDO...</span>
+    </button>
+    
     <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
   </form>
-  <a routerLink="/register">¿No tienes cuenta? Regístrate aquí</a>
+  
+  <a routerLink="/register" *ngIf="!isLoading">
+    ¿No tienes cuenta? Regístrate aquí
+  </a>
 </div>

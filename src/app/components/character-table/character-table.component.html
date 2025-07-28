@@ -1,12 +1,16 @@
-<div class="app-container">
+<div class="app-container" *ngIf="currentUser; else loginPrompt">
+  <!-- Header con información de usuario -->
   <header class="app-header">
-    <h1 class="app-title">Rick & Morty</h1>
+    <div class="user-info">
+      <h1 class="app-title">Rick & Morty</h1>
+    </div>
+    
     <div class="search-container">
       <input #searchInput 
         class="search-input" 
         type="text" 
         placeholder="Search character..." 
-        (keyup.enter)="searchCharacterByName(searchInput.value)" /> <!-- Cambiado a searchCharacterByName -->
+        (keyup.enter)="searchCharacterByName(searchInput.value)" />
       <i class="search-icon">🔍</i>
     </div>
   </header>
@@ -56,11 +60,21 @@
     <button class="reset-btn" (click)="resetFilters()">Reset Filters</button>
   </div>
 
+  <!-- Contenido principal -->
   <div class="content-wrapper">
-    <div class="character-grid">
+    <div *ngIf="isLoading" class="loading-spinner">
+      <div class="spinner"></div>
+      <p>Cargando personajes...</p>
+    </div>
+
+    <div *ngIf="!isLoading && characters.length === 0" class="no-results">
+      <p>No se encontraron personajes con los filtros aplicados</p>
+    </div>
+
+    <div class="character-grid" *ngIf="!isLoading && characters.length > 0">
       <div *ngFor="let character of characters" 
            class="character-card" 
-           (click)="loadLocationDetails(character)"> <!-- Cambiado a loadLocationDetails -->
+           (click)="loadLocationDetails(character)">
         <div class="character-image">
           <img [src]="character?.image" [alt]="character?.name" />
           <span class="status-badge" [class]="character?.status?.toLowerCase()">
@@ -79,7 +93,7 @@
           </div>
           <div class="info-row">
             <span>Location:</span>
-            <strong>{{character?.locationDetails?.name || character?.location?.name || 'Unknown'}}</strong> <!-- Actualizado para usar locationDetails -->
+            <strong>{{character?.locationDetails?.name || character?.location?.name || 'Unknown'}}</strong>
           </div>
         </div>
       </div>
@@ -91,3 +105,14 @@
     <div class="portal-effect"></div>
   </footer>
 </div>
+
+<!-- Template para usuarios no autenticados -->
+<ng-template #loginPrompt>
+  <div class="login-prompt">
+    <div class="login-message">
+      <h2>Acceso restringido</h2>
+      <p>Debes iniciar sesión para ver los personajes de Rick & Morty</p>
+      <button class="login-btn" routerLink="/login">Ir al Login</button>
+    </div>
+  </div>
+</ng-template>
