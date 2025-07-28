@@ -1,50 +1,93 @@
-<body>
-  <div class="app-container">
-    <header class="app-header">
-      <h1 class="app-title">Rick & Morty </h1>
-      <div class="search-container">
-        <input #searchInput 
-               class="search-input" 
-               type="text" 
-               placeholder="Search character..." 
-               (input)="getCharacterByName(searchInput.value)" />
-        <i class="search-icon">🔍</i>
-      </div>
-    </header>
+<div class="app-container">
+  <header class="app-header">
+    <h1 class="app-title">Rick & Morty</h1>
+    <div class="search-container">
+      <input #searchInput 
+        class="search-input" 
+        type="text" 
+        placeholder="Search character..." 
+        (keyup.enter)="searchCharacterByName(searchInput.value)" /> <!-- Cambiado a searchCharacterByName -->
+      <i class="search-icon">🔍</i>
+    </div>
+  </header>
 
-    <div class="content-wrapper">
-      <div class="character-grid">
-        <div *ngFor="let character of characters" 
-             class="character-card" 
-             (click)="loadLocation(character)">
-          <div class="character-image">
-            <img [src]="character?.image" [alt]="character?.name" />
-            <span class="status-badge" [class]="character?.status?.toLowerCase()">
-              {{character?.status}}
-            </span>
+  <!-- Sección de Filtros -->
+  <div class="filters-section">
+    <div class="filter-group">
+      <label>Status:</label>
+      <select [(ngModel)]="filters.status" (change)="onFilterChange()">
+        <option value="">All</option>
+        <option *ngFor="let status of filterOptions.statuses" [value]="status">
+          {{ status }}
+        </option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label>Gender:</label>
+      <select [(ngModel)]="filters.gender" (change)="onFilterChange()">
+        <option value="">All</option>
+        <option *ngFor="let gender of filterOptions.genders" [value]="gender">
+          {{ gender }}
+        </option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label>Species:</label>
+      <select [(ngModel)]="filters.species" (change)="onFilterChange()">
+        <option value="">All</option>
+        <option *ngFor="let specie of filterOptions.species" [value]="specie">
+          {{ specie }}
+        </option>
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <label>Location:</label>
+      <select [(ngModel)]="filters.location" (change)="onFilterChange()">
+        <option value="">All</option>
+        <option *ngFor="let location of filterOptions.locations" [value]="location">
+          {{ location }}
+        </option>
+      </select>
+    </div>
+
+    <button class="reset-btn" (click)="resetFilters()">Reset Filters</button>
+  </div>
+
+  <div class="content-wrapper">
+    <div class="character-grid">
+      <div *ngFor="let character of characters" 
+           class="character-card" 
+           (click)="loadLocationDetails(character)"> <!-- Cambiado a loadLocationDetails -->
+        <div class="character-image">
+          <img [src]="character?.image" [alt]="character?.name" />
+          <span class="status-badge" [class]="character?.status?.toLowerCase()">
+            {{character?.status}}
+          </span>
+        </div>
+        <div class="character-info">
+          <h3>{{character?.name}}</h3>
+          <div class="info-row">
+            <span>Species:</span>
+            <strong>{{character?.species}}</strong>
           </div>
-          <div class="character-info">
-            <h3>{{character?.name}}</h3>
-            <div class="info-row">
-              <span>Species:</span>
-              <strong>{{character?.species}}</strong>
-            </div>
-            <div class="info-row">
-              <span>Gender:</span>
-              <strong>{{character?.gender}}</strong>
-            </div>
-            <div class="info-row">
-              <span>Location:</span>
-              <strong>{{character?.locationName || 'Unknown'}}</strong>
-            </div>
+          <div class="info-row">
+            <span>Gender:</span>
+            <strong>{{character?.gender}}</strong>
+          </div>
+          <div class="info-row">
+            <span>Location:</span>
+            <strong>{{character?.locationDetails?.name || character?.location?.name || 'Unknown'}}</strong> <!-- Actualizado para usar locationDetails -->
           </div>
         </div>
       </div>
     </div>
-
-    <footer class="app-footer">
-      <p>facundo Vilchez, Juan Murua, Lucero Juan</p>
-      <div class="portal-effect"></div>
-    </footer>
   </div>
-</body>
+
+  <footer class="app-footer">
+    <p>Lucero Juan</p>
+    <div class="portal-effect"></div>
+  </footer>
+</div>
