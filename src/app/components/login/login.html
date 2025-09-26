@@ -2,12 +2,13 @@
   <h2>Iniciar Sesión</h2>
   <form (ngSubmit)="onSubmit()">
     <div class="input-group">
-      <label for="username" class="input-label">Usuario</label>
+      <label for="email" class="input-label">Email</label>
       <input
-        id="username"
-        [(ngModel)]="username"
-        name="username"
-        placeholder="rick_sanchez"
+        id="email"
+        type="email"
+        [(ngModel)]="email"
+        name="email"
+        placeholder="rick.sanchez@example.com"
         required
         [disabled]="isLoading"
       >

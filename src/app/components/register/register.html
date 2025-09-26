@@ -2,11 +2,12 @@
   <h2>Registro</h2>
   <form (ngSubmit)="onSubmit()">
     <div class="input-group">
-      <span class="input-label">Usuario</span>
+      <span class="input-label">Email</span>
       <input 
-        [(ngModel)]="username" 
-        name="username" 
-        placeholder="morty_smith" 
+        type="email" 
+        [(ngModel)]="email" 
+        name="email" 
+        placeholder="morty.smith@example.com" 
         required
       >
     </div>
@@ -22,7 +23,10 @@
       >
     </div>
 
-    <button type="submit">REGISTRARSE</button>
+    <button type="submit" [disabled]="isLoading">
+      <span *ngIf="!isLoading">REGISTRARSE</span>
+      <span *ngIf="isLoading">CARGANDO...</span>
+    </button>
     <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
     <p *ngIf="successMessage" class="success">{{ successMessage }}</p>
   </form>

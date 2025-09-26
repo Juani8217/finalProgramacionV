@@ -12,10 +12,10 @@ import { AuthService } from '../../auth.service'; // Asegúrate de que la ruta s
   styleUrls: ['./login.css']
 })
 export class LoginComponent {
-  username = '';
+  email = ''; // Cambiado de username a email
   password = '';
   errorMessage = '';
-  isLoading = false; // Nuevo estado para manejar carga
+  isLoading = false;
 
   constructor(
     private authService: AuthService,
@@ -26,12 +26,30 @@ export class LoginComponent {
     this.isLoading = true;
     this.errorMessage = '';
     
-    if (this.authService.login(this.username, this.password)) {
-      this.router.navigate(['/personajes']); // Redirige a la ruta protegida
-    } else {
-      this.errorMessage = 'Usuario o contraseña incorrectos';
-    }
-    
-    this.isLoading = false;
+    // Ahora authService.login devuelve un Observable, debemos suscribirnos
+    this.authService.login(this.email, this.password).subscribe({
+      next: (user) => {
+        if (user) {
+          console.log('Login exitoso con Firebase:', user.email);
+          this.router.navigate(['/personajes']); // Redirige a la ruta protegida
+        } else {
+          // Esto no debería suceder si la promesa se resolvió correctamente
+          this.errorMessage = 'Credenciales inválidas.';
+        }
+        this.isLoading = false;
+      },
+      error: (err) => {
+        // Manejo de errores de Firebase
+        console.error('Error de login de Firebase:', err.code, err.message);
+        if (err.code === 'auth/invalid-credential' || err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password') {
+          this.errorMessage = 'Email o contraseña incorrectos.';
+        } else if (err.code === 'auth/invalid-email') {
+          this.errorMessage = 'El formato del email no es válido.';
+        } else {
+          this.errorMessage = 'Ha ocurrido un error durante el inicio de sesión.';
+        }
+        this.isLoading = false;
+      }
+    });
   }
 }
